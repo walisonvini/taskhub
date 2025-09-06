@@ -21,7 +21,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!$token = JWTAuth::attempt($credentials)) {
-            return $this->errorResponse('Unauthorized', 401);
+            return $this->errorResponse('Invalid credentials', 401);
         }
 
         return $this->respondWithToken($token);

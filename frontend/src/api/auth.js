@@ -1,4 +1,4 @@
-import api from './index';
+import api from '@/api/index';
 
 export function login(credentials) {
   return api.post('/login', {
