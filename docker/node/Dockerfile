@@ -1,13 +1,12 @@
-FROM node:16-bullseye
+FROM node:16-alpine
 
-WORKDIR /var/www/html
+WORKDIR /app
 
-COPY ../../frontend/package*.json ./
+COPY frontend/package*.json ./
 
-RUN npm install -g @vue/cli@4 \
-    && npm install
+RUN npm install
 
-COPY ../../frontend .
+COPY frontend .
 
 EXPOSE 8080
 
