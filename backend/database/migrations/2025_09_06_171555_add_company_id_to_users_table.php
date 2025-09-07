@@ -14,7 +14,7 @@ class AddCompanyIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('company_id')->after('id')->constrained('companys')->onDelete('cascade');
+            $table->foreignId('company_id')->after('id')->constrained('companies')->onDelete('cascade');
         });
     }
 

@@ -8,7 +8,7 @@ export function login(credentials) {
 }
 
 export function me() {
-  return api.post('/me');
+  return api.get('/me');
 }
 
 export function logout() {

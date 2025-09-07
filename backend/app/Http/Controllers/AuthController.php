@@ -20,26 +20,31 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return $this->errorResponse('Invalid credentials', 401);
         }
 
         return $this->successResponse(new LoginResource([
             'token' => $token,
-            'user' => JWTAuth::user()
+            'user' => auth()->user()
         ]), 'Login successful');
     }
 
     public function me(): JsonResponse
     {
-        return $this->successResponse(['user' => JWTAuth::user()], 'User retrieved successfully');
+        $user = auth()->user();
+
+        return $this->successResponse(['user' => $user, 'company' => $user->company], 'User retrieved successfully');
     }
 
     public function logout(): JsonResponse
     {
-        JWTAuth::logout();
-
-        return $this->successResponse(null, 'Successfully logged out');
+        try {
+            auth('api')->logout();
+            return $this->successResponse(null, 'Successfully logged out');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Logout failed: ' . $e->getMessage(), 500);
+        }
     }
 
     public function refresh(): JsonResponse

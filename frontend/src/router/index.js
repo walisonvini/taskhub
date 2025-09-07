@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Login from '../views/auth/Login.vue';
-import Home from '../views/Home.vue';
-import AuthLayout from '../layouts/AuthLayout.vue';
-import AppLayout from '../layouts/AppLayout.vue';
-import { authGuard } from './guards';
+import Login from '@/views/auth/Login.vue';
+import Home from '@/views/Home.vue';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { authGuard } from '@/router/guards';
 
 Vue.use(VueRouter)
 

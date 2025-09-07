@@ -41,6 +41,10 @@
           </div>
         </div>
 
+        <div v-if="errorMessage" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+          <p class="text-sm text-red-600 dark:text-red-400">{{ errorMessage }}</p>
+        </div>
+
         <div>
           <button
             type="submit"
@@ -55,7 +59,7 @@
 </template>
 
 <script>
-import { login, me } from '@/api/auth';
+import { login } from '@/api/auth';
 
 export default {
   name: "LoginPage",
@@ -65,10 +69,13 @@ export default {
         email: "",
         password: "",
       },
+      errorMessage: "",
     };
   },
   methods: {
     async login() {
+      this.errorMessage = "";
+      
       try {
         const response = await login(this.form);
         const token = response.data.data.token.access_token;
@@ -79,6 +86,12 @@ export default {
         this.$router.push({ name: 'home' });
       } catch (error) {
         console.log(error.response?.data || error);
+        
+        if (error.response?.data?.message) {
+          this.errorMessage = error.response.data.message;
+        } else {
+          this.errorMessage = "Erro ao fazer login. Tente novamente.";
+        }
       }
     },
   },
