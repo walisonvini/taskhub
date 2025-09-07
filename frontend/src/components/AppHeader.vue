@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+  <header class="bg-white dark:bg-gray-900 shadow-sm px-6 py-4">
     <div class="flex items-center justify-between">
       <!-- Company Name -->
       <div>

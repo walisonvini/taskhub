@@ -52,7 +52,9 @@
           </div>
         </div>
         <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
-          <Icon icon="mdi:logout" class="text-lg" />
+          <a href="#" @click="logout">
+            <Icon icon="mdi:logout" class="text-lg" />
+          </a>
         </button>
       </div>
     </div>
@@ -61,11 +63,19 @@
 
 <script>
 import { Icon } from '@iconify/vue2'
+import { logout } from '@/api/auth';
 
 export default {
   name: 'AppSidebar',
   components: {
     Icon
+  },
+  methods: {
+    async logout() {
+      await logout();
+      this.$store.dispatch('logout');
+      this.$router.push('/login');
+    }
   }
 }
 </script>
