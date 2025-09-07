@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Requests\Auth\LoginRequest;
+
+use App\Http\Resources\Auth\LoginResource;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -24,12 +24,15 @@ class AuthController extends Controller
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->respondWithToken($token);
+        return $this->successResponse(new LoginResource([
+            'token' => $token,
+            'user' => JWTAuth::user()
+        ]), 'Login successful');
     }
 
     public function me(): JsonResponse
     {
-        return $this->successResponse(JWTAuth::user(), 'User retrieved successfully');
+        return $this->successResponse(['user' => JWTAuth::user()], 'User retrieved successfully');
     }
 
     public function logout(): JsonResponse
@@ -41,15 +44,11 @@ class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(JWTAuth::refresh());
-    }
-
-    protected function respondWithToken(string $token): JsonResponse
-    {
-        return $this->successResponse([
-            'access_token' => $token,
+        return $this->successResponse(['token' => [
+            'access_token' => JWTAuth::refresh(),
             'token_type' => 'Bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
-        ]);
+        ]], 'Token refreshed successfully');
     }
+
 }

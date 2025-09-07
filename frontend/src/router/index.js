@@ -14,7 +14,7 @@ const routes = [
     path: '/',
     component: AppLayout,
     children: [
-      { path: 'login', component: Login, alias: '/login' },
+      { path: '/login', name: 'login', component: Login},
       { path: '', redirect: 'login' },
     ]
   },
@@ -23,8 +23,8 @@ const routes = [
     path: '/dashboard',
     component: AuthLayout,
     children: [
+      { path: 'home', name: 'home', component: Home },
       { path: '', redirect: 'home' },
-      { path: 'home', component: Home },
     ]
   },
 ];

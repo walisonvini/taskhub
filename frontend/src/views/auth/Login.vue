@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { login } from '@/api/auth';
+import { login, me } from '@/api/auth';
 
 export default {
   name: "LoginPage",
@@ -68,14 +68,18 @@ export default {
     };
   },
   methods: {
-    login() {
-      login(this.form).then(response => {
-        localStorage.setItem('token', response.data.access_token);
+    async login() {
+      try {
+        const response = await login(this.form);
+        const token = response.data.data.token.access_token;
+        const user = response.data.data.user;
 
-        this.$router.push('/dashboard');
-      }).catch(error => {
-        console.log(error.response.data);
-      });
+        this.$store.dispatch('login', { token: token, user: user });
+
+        this.$router.push({ name: 'home' });
+      } catch (error) {
+        console.log(error.response?.data || error);
+      }
     },
   },
 };
