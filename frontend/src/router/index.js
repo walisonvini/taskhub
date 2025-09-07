@@ -1,16 +1,21 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
 import Login from '../views/auth/Login.vue';
 import Home from '../views/Home.vue';
 import AuthLayout from '../layouts/AuthLayout.vue';
 import AppLayout from '../layouts/AppLayout.vue';
+import { authGuard } from './guards';
 
-export default [
-  { path: '/', redirect: '/login' },
-  
+Vue.use(VueRouter)
+
+const routes = [
   {
-    path: '/app',
+    path: '/',
     component: AppLayout,
     children: [
-      { path: 'login', component: Login, alias: '/login' }
+      { path: 'login', component: Login, alias: '/login' },
+      { path: '', redirect: 'login' },
     ]
   },
   
@@ -23,3 +28,12 @@ export default [
     ]
   },
 ];
+
+const router = new VueRouter({
+  mode: 'history',
+  routes
+})
+
+router.beforeEach(authGuard)
+
+export default router
