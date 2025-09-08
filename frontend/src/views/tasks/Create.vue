@@ -7,7 +7,7 @@
     </div>
 
     <!-- Form -->
-    <form @submit.prevent="createTask" class="space-y-6">
+    <form @submit.prevent="create" class="space-y-6">
       <!-- Title -->
       <div>
         <Label for-id="title" :required="true">Título</Label>
@@ -103,6 +103,8 @@ import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Select from '@/components/ui/Select.vue';
 
+import { createTask } from '@/api/task';
+
 export default {
   name: "TasksCreate",
   components: {
@@ -120,14 +122,23 @@ export default {
         status: 'pendente',
         due_date: ''
       },
-      errorMessage: '',
-      successMessage: '',
       isSubmitting: false,
       minDate: new Date().toISOString().split('T')[0]
     }
   },
   methods: {
-    
+    async create() {
+      try {
+        this.isSubmitting = true;
+        
+        await createTask(this.form);
+        this.$router.push({ name: 'tasks.index' });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isSubmitting = false;
+      }
+    }
   }
 };
 </script>

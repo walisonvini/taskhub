@@ -6,10 +6,12 @@ use Illuminate\Http\JsonResponse;
 
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Requests\Task\IndexTaskRequest;
 
 use App\Traits\ApiResponse;
 
 use App\Http\Resources\Task\TaskResource;
+use App\Http\Resources\Task\TaskPaginatedResource;
 
 use App\Services\TaskService;
 
@@ -23,13 +25,15 @@ class TaskController extends Controller
         private TaskService $taskService
     ){}
 
-
-    public function index()
+    public function index(IndexTaskRequest $request)
     {
         try {
-            $tasks = $this->taskService->all();
+            $tasks = $this->taskService->getPaginatedTasks($request);
 
-            return $this->successResponse([ 'tasks' => TaskResource::collection($tasks)], 'Tasks retrieved successfully');
+            return $this->successResponse(
+                new TaskPaginatedResource($tasks), 
+                'Tasks retrieved successfully'
+            );
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }

@@ -13,14 +13,36 @@ class TaskService
 {
     use HasCompanyScope;
 
-    public function all(): Collection
+    public function all($perPage = 10, $page = 1, $filters = [])
     {
-        return Task::all();
+        $query = Task::query();
+        
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        
+        if (!empty($filters['priority'])) {
+            $query->where('priority', $filters['priority']);
+        }
+        
+        return $query->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    public function getPaginatedTasks($request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1);
+        $filters = [
+            'status' => $request->get('status'),
+            'priority' => $request->get('priority')
+        ];
+        
+        return $this->all($perPage, $page, $filters);
     }
 
     public function create(array $data): Task
     {
-        if ($data['due_date'] < now()) {
+        if (\Carbon\Carbon::parse($data['due_date'])->lt(today())) {
             throw new Exception('Due date cannot be in the past');
         }
 
