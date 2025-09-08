@@ -13,30 +13,24 @@
       <form class="mt-8 space-y-6" @submit.prevent="login">
         <div class="space-y-4">
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email
-            </label>
-            <input
+            <Label for-id="email" :required="true">Email</Label>
+            <Input
               id="email"
               v-model="form.email"
               type="email"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-800 dark:text-white"
               placeholder="seu@email.com"
+              :required="true"
             />
           </div>
           
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Senha
-            </label>
-            <input
+            <Label for-id="password" :required="true">Senha</Label>
+            <Input
               id="password"
               v-model="form.password"
               type="password"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-800 dark:text-white"
               placeholder="Sua senha"
+              :required="true"
             />
           </div>
         </div>
@@ -46,12 +40,14 @@
         </div>
 
         <div>
-          <button
+          <Button
             type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900 transition-colors"
+            variant="primary"
+            size="md"
+            :full-width="true"
           >
             Entrar
-          </button>
+          </Button>
         </div>
       </form>
     </div>
@@ -60,9 +56,17 @@
 
 <script>
 import { login } from '@/api/auth';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
 
 export default {
   name: "LoginPage",
+  components: {
+    Button,
+    Input,
+    Label
+  },
   data() {
     return {
       form: {
@@ -74,9 +78,8 @@ export default {
   },
   methods: {
     async login() {
-      this.errorMessage = "";
-      
       try {
+        console.log(this.form);
         const response = await login(this.form);
         const token = response.data.data.token.access_token;
         const user = response.data.data.user;
@@ -85,8 +88,6 @@ export default {
 
         this.$router.push({ name: 'home' });
       } catch (error) {
-        console.log(error.response?.data || error);
-        
         if (error.response?.data?.message) {
           this.errorMessage = error.response.data.message;
         } else {

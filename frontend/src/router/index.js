@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Login from '@/views/auth/Login.vue';
-import Home from '@/views/Home.vue';
+import { authGuard } from '@/router/guards';
+
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { authGuard } from '@/router/guards';
+
+import Login from '@/views/auth/Login.vue';
+import Home from '@/views/Home.vue';
+import Tasks from '@/views/tasks';
 
 Vue.use(VueRouter)
 
@@ -25,6 +28,8 @@ const routes = [
     children: [
       { path: 'home', name: 'home', component: Home },
       { path: '', redirect: 'home' },
+      { path: 'tasks', name: 'tasks.index', component: Tasks.index },
+      { path: 'tasks/create', name: 'tasks.create', component: Tasks.create },
     ]
   },
 ];

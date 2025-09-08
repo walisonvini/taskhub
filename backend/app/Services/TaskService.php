@@ -20,6 +20,10 @@ class TaskService
 
     public function create(array $data): Task
     {
+        if ($data['due_date'] < now()) {
+            throw new Exception('Due date cannot be in the past');
+        }
+
         return Task::create($this->addCompanyContext($data));
     }
 

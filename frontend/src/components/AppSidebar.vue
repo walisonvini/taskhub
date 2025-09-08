@@ -11,29 +11,16 @@
     <!-- Navigation -->
     <nav class="flex-1 p-4">
       <ul class="space-y-2">
-        <li>
-          <a href="#" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-            <Icon icon="mdi:view-dashboard" class="mr-3 text-lg" />
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-            <Icon icon="mdi:clipboard-list" class="mr-3 text-lg" />
-            Tarefas
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-            <Icon icon="mdi:account-group" class="mr-3 text-lg" />
-            Equipe
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
-            <Icon icon="mdi:cog" class="mr-3 text-lg" />
-            Configurações
-          </a>
+        <li v-for="item in navigationItems" :key="item.name">
+          <router-link 
+            :to="item.to" 
+            class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+            :class="{ 'bg-primary/10 text-primary dark:text-primary': isActiveRoute(item) }"
+            active-class="bg-primary/10 text-primary dark:text-primary"
+          >
+            <Icon :icon="item.icon" class="mr-3 text-lg" />
+            {{ item.name }}
+          </router-link>
         </li>
       </ul>
     </nav>
@@ -70,7 +57,32 @@ export default {
   components: {
     Icon
   },
+  data() {
+    return {
+      navigationItems: [
+        {
+          name: 'Home',
+          to: '/dashboard/home',
+          icon: 'mdi:view-grid'
+        },
+        {
+          name: 'Tarefas',
+          to: '/dashboard/tasks',
+          icon: 'mdi:clipboard-list'
+        }
+      ]
+    }
+  },
   methods: {
+    isActiveRoute(item) {
+      const currentPath = this.$route.path;
+      
+      if (item.to === '/dashboard') {
+        return currentPath === '/dashboard' || currentPath === '/dashboard/home';
+      }
+      
+      return currentPath.startsWith(item.to);
+    },
     async logout() {
       await logout();
       this.$store.dispatch('logout');
