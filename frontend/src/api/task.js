@@ -19,3 +19,7 @@ export function updateTask(id, task) {
 export function deleteTask(id) {
   return api.delete(`/tasks/${id}`);
 }
+
+export function completeTask(id) {
+  return api.patch(`/tasks/${id}/complete`);
+}

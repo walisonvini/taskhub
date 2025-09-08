@@ -55,6 +55,15 @@ services:
     networks:
       - taskhub
 
+  mailpit:
+    image: axllent/mailpit
+    container_name: taskhub_mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - taskhub
+
 networks:
   taskhub:
 

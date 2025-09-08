@@ -22,9 +22,7 @@
               @click="close"
               class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
+              <Icon icon="mdi:close" class="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -60,11 +58,13 @@
 
 <script>
 import Button from './Button.vue';
+import { Icon } from '@iconify/vue2';
 
 export default {
   name: 'UiModal',
   components: {
-    Button
+    Button,
+    Icon
   },
   props: {
     show: {

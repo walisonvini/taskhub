@@ -5,9 +5,12 @@ namespace App\Services;
 use App\Models\Task;
 use App\Traits\HasCompanyScope;
 
-use Exception;
+use App\Jobs\SendTaskCompletedEmail;
+use App\Jobs\SendTaskCreatedEmail;
 
-use Illuminate\Database\Eloquent\Collection;
+use App\Enums\Task\TaskStatus;
+
+use Exception;
 
 class TaskService
 {
@@ -25,7 +28,7 @@ class TaskService
             $query->where('priority', $filters['priority']);
         }
         
-        return $query->paginate($perPage, ['*'], 'page', $page);
+        return $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
     }
 
     public function getPaginatedTasks($request)
@@ -46,7 +49,11 @@ class TaskService
             throw new Exception('Due date cannot be in the past');
         }
 
-        return Task::create($this->addCompanyContext($data));
+        $task = Task::create($this->addCompanyContext($data));
+        
+        SendTaskCreatedEmail::dispatch($task);
+        
+        return $task;
     }
 
     public function find(int $id): Task
@@ -63,6 +70,15 @@ class TaskService
     public function update(Task $task, array $data): Task
     {
         $task->update($data);
+        return $task;
+    }
+
+    public function complete(Task $task): Task
+    {
+        $task->update(['status' => TaskStatus::CONCLUIDA]);
+        
+        SendTaskCompletedEmail::dispatch($task);
+        
         return $task;
     }
 

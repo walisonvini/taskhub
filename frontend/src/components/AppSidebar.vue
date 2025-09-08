@@ -34,8 +34,8 @@
             <Icon icon="mdi:account" class="text-sm text-gray-700 dark:text-gray-300" />
           </div>
           <div class="ml-3">
-            <p class="text-sm font-medium text-gray-900 dark:text-white">Usuário</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">user@email.com</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userName }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ userEmail }}</p>
           </div>
         </div>
         <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -71,6 +71,14 @@ export default {
           icon: 'mdi:clipboard-list'
         }
       ]
+    }
+  },
+  computed: {
+    userName() {
+      return this.$store.getters.getUser?.name || 'Usuário'
+    },
+    userEmail() {
+      return this.$store.getters.getUser?.email || 'user@email.com'
     }
   },
   methods: {

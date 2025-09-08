@@ -82,7 +82,7 @@
 </template>
   
 <script>
-import { getTasks, updateTask, deleteTask } from '@/api/task';
+import { getTasks, updateTask, deleteTask, completeTask } from '@/api/task';
 import TaskCard from '@/components/TaskCard.vue';
 import Button from '@/components/ui/Button.vue';
 import Select from '@/components/ui/Select.vue';
@@ -177,20 +177,23 @@ export default {
     },
     async handleToggleComplete(task) {
       try {
-        const newStatus = task.status === 'concluída' ? 'pendente' : 'concluída';
-        await updateTask(task.id, { status: newStatus });
-        
-        // Atualizar o status localmente
-        const taskIndex = this.tasks.findIndex(t => t.id === task.id);
-        if (taskIndex !== -1) {
-          this.tasks[taskIndex].status = newStatus;
+        if (task.status === 'concluída') {
+          // Se já está concluída, volta para pendente usando update
+          await updateTask(task.id, { status: 'pendente' });
+          const taskIndex = this.tasks.findIndex(t => t.id === task.id);
+          if (taskIndex !== -1) {
+            this.tasks[taskIndex].status = 'pendente';
+          }
+          this.$toast.success(`Tarefa "${task.title}" marcada como pendente!`);
+        } else {
+          // Se está pendente, marca como concluída usando endpoint específico
+          await completeTask(task.id);
+          const taskIndex = this.tasks.findIndex(t => t.id === task.id);
+          if (taskIndex !== -1) {
+            this.tasks[taskIndex].status = 'concluída';
+          }
+          this.$toast.success(`Tarefa "${task.title}" marcada como concluída!`);
         }
-        
-        const message = newStatus === 'concluída' 
-          ? `Tarefa "${task.title}" marcada como concluída!`
-          : `Tarefa "${task.title}" marcada como pendente!`;
-        
-        this.$toast.success(message);
       } catch (error) {
         console.error('Erro ao atualizar status da tarefa:', error);
         this.$toast.error('Erro ao atualizar tarefa. Tente novamente.');

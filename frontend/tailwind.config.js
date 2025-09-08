@@ -3,7 +3,7 @@ module.exports = {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}"
   ],
-  darkMode: 'dark',
+  darkMode: 'media',
   theme: {
     extend: {
       colors: {

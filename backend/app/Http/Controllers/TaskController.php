@@ -72,6 +72,17 @@ class TaskController extends Controller
         }
     }
 
+    public function complete($id): JsonResponse
+    {
+        try {
+            $task = $this->taskService->complete($this->taskService->find($id));
+
+            return $this->successResponse([ 'task' => new TaskResource($task)], 'Task completed successfully');
+        } catch (Exception $e) {
+            return $this->errorResponse($e->getMessage(), 404);
+        }
+    }
+
     public function destroy($id)
     {
         try {

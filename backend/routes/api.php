@@ -13,4 +13,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 
     Route::apiResource('tasks', TaskController::class);
+    Route::patch('tasks/{id}/complete', [TaskController::class, 'complete']);
 });

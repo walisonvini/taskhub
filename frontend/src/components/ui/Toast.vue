@@ -24,9 +24,7 @@
           :class="closeButtonClasses"
         >
           <span class="sr-only">Fechar</span>
-          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
+          <Icon icon="mdi:close" class="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -34,8 +32,13 @@
 </template>
 
 <script>
+import { Icon } from '@iconify/vue2';
+
 export default {
   name: 'UiToast',
+  components: {
+    Icon
+  },
   props: {
     type: {
       type: String,
@@ -74,20 +77,20 @@ export default {
     toastClasses() {
       const baseClasses = 'transform transition-all duration-300 ease-in-out';
       const typeClasses = {
-        success: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
-        error: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
-        warning: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800',
-        info: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+        success: 'bg-green-50 dark:bg-green-900/80 border-green-200 dark:border-green-700',
+        error: 'bg-red-50 dark:bg-red-900/80 border-red-200 dark:border-red-700',
+        warning: 'bg-yellow-50 dark:bg-yellow-900/80 border-yellow-200 dark:border-yellow-700',
+        info: 'bg-blue-50 dark:bg-blue-900/80 border-blue-200 dark:border-blue-700'
       };
       return [baseClasses, typeClasses[this.type]].join(' ');
     },
     iconClasses() {
       const baseClasses = 'flex items-center justify-center w-6 h-6 rounded-full text-sm font-bold';
       const typeClasses = {
-        success: 'bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-200',
-        error: 'bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-200',
-        warning: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-600 dark:text-yellow-200',
-        info: 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-200'
+        success: 'bg-green-100 dark:bg-green-800/90 text-green-600 dark:text-green-200',
+        error: 'bg-red-100 dark:bg-red-800/90 text-red-600 dark:text-red-200',
+        warning: 'bg-yellow-100 dark:bg-yellow-800/90 text-yellow-600 dark:text-yellow-200',
+        info: 'bg-blue-100 dark:bg-blue-800/90 text-blue-600 dark:text-blue-200'
       };
       return [baseClasses, typeClasses[this.type]].join(' ');
     },
