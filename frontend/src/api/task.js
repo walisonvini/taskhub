@@ -11,3 +11,11 @@ export function getTask(id) {
 export function createTask(task) {
   return api.post('/tasks', task);
 }
+
+export function updateTask(id, task) {
+  return api.put(`/tasks/${id}`, task);
+}
+
+export function deleteTask(id) {
+  return api.delete(`/tasks/${id}`);
+}

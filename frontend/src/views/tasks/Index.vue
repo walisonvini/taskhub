@@ -46,6 +46,10 @@
         v-for="task in tasks" 
         :key="task.id"
         :task="task"
+        @view="handleViewTask"
+        @edit="handleEditTask"
+        @delete="handleDeleteTask"
+        @toggle-complete="handleToggleComplete"
       />
 
       <div v-if="tasks.length === 0" class="text-center py-8">
@@ -64,15 +68,26 @@
         @page-change="handlePageChange"
       />
     </div>
+
+    <!-- Modal de confirmação -->
+    <UiModal
+      :show="showDeleteModal"
+      title="Excluir Tarefa"
+      :message="deleteModalMessage"
+      confirm-text="Excluir"
+      @close="closeDeleteModal"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
   
 <script>
-import { getTasks } from '@/api/task';
+import { getTasks, updateTask, deleteTask } from '@/api/task';
 import TaskCard from '@/components/TaskCard.vue';
 import Button from '@/components/ui/Button.vue';
 import Select from '@/components/ui/Select.vue';
 import UiPagination from '@/components/Pagination.vue';
+import UiModal from '@/components/ui/Modal.vue';
 
 export default {
   name: "TasksIndex",
@@ -80,7 +95,8 @@ export default {
     TaskCard,
     Button,
     Select,
-    UiPagination
+    UiPagination,
+    UiModal
   },
   data() {
     return {
@@ -95,7 +111,9 @@ export default {
         totalPages: 1,
         totalItems: 0,
         itemsPerPage: 10
-      }
+      },
+      showDeleteModal: false,
+      taskToDelete: null
     }
   },
   computed: {
@@ -106,11 +124,77 @@ export default {
         totalItems: 0,
         itemsPerPage: parseInt(this.$route.query.per_page) || 10
       }
+    },
+    deleteModalMessage() {
+      if (this.taskToDelete) {
+        return `Tem certeza que deseja excluir a tarefa "${this.taskToDelete.title}"? Esta ação não pode ser desfeita.`;
+      }
+      return '';
     }
   },
   methods: {
     createTask() {
       this.$router.push({ name: 'tasks.create' });
+    },
+    handleViewTask(task) {
+      if (task && task.id) {
+        this.$router.push({ name: 'tasks.show', params: { id: task.id } });
+      } else {
+        this.$toast.error('Erro: ID da tarefa não encontrado');
+      }
+    },
+    handleEditTask(task) {
+      if (task && task.id) {
+        this.$router.push({ name: 'tasks.edit', params: { id: task.id } });
+      } else {
+        this.$toast.error('Erro: ID da tarefa não encontrado');
+      }
+    },
+    handleDeleteTask(task) {
+      this.taskToDelete = task;
+      this.showDeleteModal = true;
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.taskToDelete = null;
+    },
+    async confirmDelete() {
+      if (!this.taskToDelete) return;
+      
+      try {
+        // Excluir tarefa via API
+        await deleteTask(this.taskToDelete.id);
+        
+        this.$toast.success(`Tarefa "${this.taskToDelete.title}" excluída com sucesso!`);
+        this.closeDeleteModal();
+        
+        // Recarregar as tarefas para manter paginação consistente
+        await this.loadTasks();
+      } catch (error) {
+        console.error('Erro ao excluir tarefa:', error);
+        this.$toast.error('Erro ao excluir tarefa. Tente novamente.');
+      }
+    },
+    async handleToggleComplete(task) {
+      try {
+        const newStatus = task.status === 'concluída' ? 'pendente' : 'concluída';
+        await updateTask(task.id, { status: newStatus });
+        
+        // Atualizar o status localmente
+        const taskIndex = this.tasks.findIndex(t => t.id === task.id);
+        if (taskIndex !== -1) {
+          this.tasks[taskIndex].status = newStatus;
+        }
+        
+        const message = newStatus === 'concluída' 
+          ? `Tarefa "${task.title}" marcada como concluída!`
+          : `Tarefa "${task.title}" marcada como pendente!`;
+        
+        this.$toast.success(message);
+      } catch (error) {
+        console.error('Erro ao atualizar status da tarefa:', error);
+        this.$toast.error('Erro ao atualizar tarefa. Tente novamente.');
+      }
     },
     initFiltersFromUrl() {
       this.filters.status = this.$route.query.status || '';

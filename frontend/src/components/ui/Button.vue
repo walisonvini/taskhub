@@ -21,7 +21,7 @@ export default {
     variant: {
       type: String,
       default: 'primary',
-      validator: (value) => ['primary', 'secondary', 'outline', 'ghost'].includes(value)
+      validator: (value) => ['primary', 'secondary', 'outline', 'ghost', 'danger'].includes(value)
     },
     size: {
       type: String,
@@ -51,7 +51,8 @@ export default {
         primary: 'text-white bg-primary hover:bg-primary/90 focus:ring-primary border border-transparent',
         secondary: 'text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-gray-500 border border-gray-300 dark:border-gray-600',
         outline: 'text-primary dark:text-primary bg-transparent hover:bg-primary/10 dark:hover:bg-primary/20 focus:ring-primary border border-primary dark:border-primary',
-        ghost: 'text-primary dark:text-primary bg-transparent hover:bg-primary/10 dark:hover:bg-primary/20 focus:ring-primary border border-transparent'
+        ghost: 'text-primary dark:text-primary bg-transparent hover:bg-primary/10 dark:hover:bg-primary/20 focus:ring-primary border border-transparent',
+        danger: 'text-white bg-red-600 hover:bg-red-700 focus:ring-red-500 border border-transparent'
       };
       
       const disabledClasses = this.disabled 

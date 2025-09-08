@@ -30,6 +30,8 @@ const routes = [
       { path: '', redirect: 'home' },
       { path: 'tasks', name: 'tasks.index', component: Tasks.index },
       { path: 'tasks/create', name: 'tasks.create', component: Tasks.create },
+      { path: 'tasks/:id', name: 'tasks.show', component: Tasks.show },
+      { path: 'tasks/:id/edit', name: 'tasks.edit', component: Tasks.edit },
     ]
   },
 ];
