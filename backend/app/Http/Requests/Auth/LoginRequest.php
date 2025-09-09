@@ -28,4 +28,29 @@ class LoginRequest extends FormRequest
             'password' => ['required'],
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'O email é obrigatório',
+            'email.email' => 'O email deve ser um email válido',
+            'password.required' => 'A senha é obrigatória',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Os dados fornecidos são inválidos.',
+                'errors' => $validator->errors(),
+            ], 422)
+        );
+    }
 }

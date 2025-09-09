@@ -1,14 +1,20 @@
 <template>
-  <div class="fixed top-4 right-4 z-50 space-y-2">
-    <Toast
-      v-for="toast in toasts"
-      :key="toast.id"
-      :type="toast.type"
-      :message="toast.message"
-      :duration="toast.duration"
-      :closable="toast.closable"
-      @close="removeToast(toast.id)"
-    />
+  <div class="fixed top-4 right-4 z-50">
+    <transition
+      name="toast-fade"
+      mode="out-in"
+      appear
+    >
+      <Toast
+        v-if="currentToast"
+        :key="currentToast.id"
+        :type="currentToast.type"
+        :message="currentToast.message"
+        :duration="currentToast.duration"
+        :closable="currentToast.closable"
+        @close="removeCurrentToast"
+      />
+    </transition>
   </div>
 </template>
 
@@ -22,8 +28,14 @@ export default {
   },
   data() {
     return {
-      toasts: [],
-      nextId: 1
+      currentToast: null,
+      nextId: 1,
+      timeout: null
+    }
+  },
+  computed: {
+    hasToast() {
+      return this.currentToast !== null;
     }
   },
   methods: {
@@ -37,25 +49,66 @@ export default {
         closable: toast.closable !== false
       };
       
-      this.toasts.push(newToast);
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+        this.timeout = null;
+      }
+      
+      this.currentToast = newToast;
       
       if (newToast.duration > 0) {
-        setTimeout(() => {
-          this.removeToast(id);
+        this.timeout = setTimeout(() => {
+          this.removeCurrentToast();
         }, newToast.duration);
       }
       
       return id;
     },
-    removeToast(id) {
-      const index = this.toasts.findIndex(toast => toast.id === id);
-      if (index > -1) {
-        this.toasts.splice(index, 1);
+    removeCurrentToast() {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+        this.timeout = null;
       }
+      this.currentToast = null;
     },
     clearAll() {
-      this.toasts = [];
+      this.removeCurrentToast();
+    }
+  },
+  beforeDestroy() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
     }
   }
 }
 </script>
+
+<style scoped>
+.toast-fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.toast-fade-leave-active {
+  transition: all 0.2s ease-out;
+}
+
+.toast-fade-enter {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.toast-fade-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-fade-leave {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-fade-leave-to {
+  transform: translateX(0);
+  opacity: 0;
+}
+</style>

@@ -22,6 +22,7 @@ const ToastPlugin = {
         return initToast().addToast({
           type: 'success',
           message,
+          replacePrevious: true,
           ...options
         });
       },
@@ -30,6 +31,7 @@ const ToastPlugin = {
         return initToast().addToast({
           type: 'error',
           message,
+          replacePrevious: true,
           ...options
         });
       },
@@ -38,6 +40,7 @@ const ToastPlugin = {
         return initToast().addToast({
           type: 'warning',
           message,
+          replacePrevious: true,
           ...options
         });
       },
@@ -46,6 +49,7 @@ const ToastPlugin = {
         return initToast().addToast({
           type: 'info',
           message,
+          replacePrevious: true,
           ...options
         });
       },
@@ -54,6 +58,7 @@ const ToastPlugin = {
         return initToast().addToast({
           type,
           message,
+          replacePrevious: true,
           ...options
         });
       },

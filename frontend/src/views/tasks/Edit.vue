@@ -21,7 +21,7 @@
           v-model="form.title"
           type="text"
           placeholder="Digite o título da task"
-          :required="true"
+          :has-error="errors.title"
         />
       </div>
 
@@ -32,7 +32,7 @@
           id="description"
           v-model="form.description"
           placeholder="Descreva a task (opcional)"
-          class="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:bg-gray-800 dark:text-white transition-colors resize-none"
+          :class="textareaClasses"
           rows="4"
         ></textarea>
       </div>
@@ -43,7 +43,7 @@
         <Select
           id="priority"
           v-model="form.priority"
-          :required="true"
+          :has-error="errors.priority"
         >
           <option value="">Selecione a prioridade</option>
           <option value="baixa">Baixa</option>
@@ -58,7 +58,7 @@
         <Select
           id="status"
           v-model="form.status"
-          :required="true"
+          :has-error="errors.status"
         >
           <option value="">Selecione o status</option>
           <option value="pendente">Pendente</option>
@@ -75,7 +75,7 @@
           v-model="form.due_date"
           type="date"
           :min="minDate"
-          :required="true"
+          :has-error="errors.due_date"
         />
       </div>
 
@@ -114,10 +114,12 @@ import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Select from '@/components/ui/Select.vue';
+import formValidationMixin from '@/mixins/formValidation.js';
 import { getTask, updateTask } from '@/api/task';
 
 export default {
   name: "TasksEdit",
+  mixins: [formValidationMixin],
   components: {
     Button,
     Input,
@@ -136,7 +138,25 @@ export default {
         status: '',
         due_date: ''
       },
+      errors: {
+        title: false,
+        description: false,
+        priority: false,
+        status: false,
+        due_date: false
+      },
       minDate: new Date().toISOString().split('T')[0]
+    }
+  },
+  computed: {
+    textareaClasses() {
+      const baseClasses = 'block w-full px-4 py-2.5 border rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:bg-gray-800 dark:text-white transition-colors resize-none';
+      
+      if (this.errors.description) {
+        return `${baseClasses} border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20`;
+      }
+      
+      return `${baseClasses} border-gray-300 dark:border-gray-600`;
     }
   },
   methods: {
@@ -163,6 +183,9 @@ export default {
       }
     },
     async update() {
+      // Limpar erros anteriores
+      this.clearErrors();
+      
       try {
         this.isSubmitting = true;
         
@@ -171,12 +194,14 @@ export default {
         this.$toast.success('Tarefa atualizada com sucesso!');
         this.$router.push({ name: 'tasks.index' });
       } catch (error) {
-        console.error('Erro ao atualizar tarefa:', error);
-        this.$toast.error('Erro ao atualizar tarefa. Tente novamente.');
+        this.handleValidationError(error, 'Erro ao atualizar tarefa. Tente novamente.');
       } finally {
         this.isSubmitting = false;
       }
     }
+  },
+  watch: {
+    ...formValidationMixin.methods.createFieldWatchers(['title', 'description', 'priority', 'status', 'due_date'])
   },
   mounted() {
     this.loadTask();

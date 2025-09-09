@@ -60,8 +60,7 @@ export default {
   },
   data() {
     return {
-      visible: false,
-      timeout: null
+      visible: true
     }
   },
   computed: {
@@ -113,35 +112,10 @@ export default {
       return typeClasses[this.type];
     }
   },
-  mounted() {
-    this.show();
-  },
   methods: {
-    show() {
-      this.visible = true;
-      
-      if (this.duration > 0) {
-        this.timeout = setTimeout(() => {
-          this.close();
-        }, this.duration);
-      }
-    },
     close() {
       this.visible = false;
-      
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-        this.timeout = null;
-      }
-      
-      setTimeout(() => {
-        this.$emit('close');
-      }, 300);
-    }
-  },
-  beforeDestroy() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
+      this.$emit('close');
     }
   }
 }

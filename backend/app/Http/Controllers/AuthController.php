@@ -21,7 +21,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return $this->errorResponse('Invalid credentials', 401);
+            return $this->errorResponse('Credenciais inválidas', 401);
         }
 
         return $this->successResponse(new LoginResource([
@@ -34,16 +34,16 @@ class AuthController extends Controller
     {
         $user = auth()->user();
 
-        return $this->successResponse(['user' => $user, 'company' => $user->company], 'User retrieved successfully');
+        return $this->successResponse(['user' => $user, 'company' => $user->company], 'Usuário recuperado com sucesso');
     }
 
     public function logout(): JsonResponse
     {
         try {
             auth('api')->logout();
-            return $this->successResponse(null, 'Successfully logged out');
+            return $this->successResponse(null, 'Logout realizado com sucesso');
         } catch (\Exception $e) {
-            return $this->errorResponse('Logout failed: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Logout falhou: ' . $e->getMessage(), 500);
         }
     }
 
@@ -53,7 +53,7 @@ class AuthController extends Controller
             'access_token' => JWTAuth::refresh(),
             'token_type' => 'Bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60
-        ]], 'Token refreshed successfully');
+        ]], 'Token atualizado com sucesso');
     }
 
 }

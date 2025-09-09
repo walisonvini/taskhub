@@ -20,6 +20,7 @@
               type="email"
               placeholder="seu@email.com"
               :required="true"
+              :has-error="errors.email"
             />
           </div>
           
@@ -30,13 +31,9 @@
               v-model="form.password"
               type="password"
               placeholder="Sua senha"
-              :required="true"
+              :has-error="errors.password"
             />
           </div>
-        </div>
-
-        <div v-if="errorMessage" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-          <p class="text-sm text-red-600 dark:text-red-400">{{ errorMessage }}</p>
         </div>
 
         <div>
@@ -59,9 +56,11 @@ import { login } from '@/api/auth';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import formValidationMixin from '@/mixins/formValidation.js';
 
 export default {
   name: "LoginPage",
+  mixins: [formValidationMixin],
   components: {
     Button,
     Input,
@@ -73,13 +72,17 @@ export default {
         email: "",
         password: "",
       },
-      errorMessage: "",
+      errors: {
+        email: false,
+        password: false,
+      },
     };
   },
   methods: {
     async login() {
+      this.clearErrors();
+      
       try {
-        console.log(this.form);
         const response = await login(this.form);
         const token = response.data.data.token.access_token;
         const user = response.data.data.user;
@@ -88,13 +91,12 @@ export default {
 
         this.$router.push({ name: 'home' });
       } catch (error) {
-        if (error.response?.data?.message) {
-          this.errorMessage = error.response.data.message;
-        } else {
-          this.errorMessage = "Erro ao fazer login. Tente novamente.";
-        }
+        this.handleValidationError(error, "Erro ao fazer login. Tente novamente.");
       }
     },
+  },
+  watch: {
+    ...formValidationMixin.methods.createFieldWatchers(['email', 'password'])
   },
 };
 </script>
