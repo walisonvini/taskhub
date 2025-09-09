@@ -56,6 +56,8 @@ class TaskExportService
         }
 
         $query = Task::query();
+
+        $query->where('company_id', $taskExport->company_id);
         
         if ($filters && is_array($filters)) {
             $query->where($filters);
