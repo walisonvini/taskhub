@@ -1,12 +1,32 @@
 <template>
-  <div class="w-64 h-screen bg-white dark:bg-gray-800 shadow-lg flex flex-col">
-    <!-- Logo/Header -->
-    <div class="p-6">
-      <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-        TaskHub
-      </h1>
-      <div class="mt-4 border-b border-gray-200 dark:border-gray-700 mx-4"></div>
-    </div>
+  <div>
+    <!-- Mobile overlay -->
+    <div 
+      v-if="isOpen && isMobile" 
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+      @click="closeSidebar"
+    ></div>
+    
+    <!-- Sidebar -->
+    <div 
+      :class="sidebarClasses"
+    >
+      <!-- Close button for mobile - positioned absolutely -->
+      <button 
+        v-if="isMobile"
+        @click="closeSidebar"
+        class="lg:hidden absolute top-4 right-4 z-10 p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 bg-white dark:bg-gray-800 shadow-sm"
+      >
+        <Icon icon="mdi:close" class="text-xl" />
+      </button>
+      
+      <!-- Logo/Header -->
+      <div class="p-6">
+        <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+          TaskHub
+        </h1>
+        <div class="mt-4 border-b border-gray-200 dark:border-gray-700 mx-4"></div>
+      </div>
 
     <!-- Navigation -->
     <nav class="flex-1 p-4">
@@ -45,6 +65,7 @@
         </button>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -59,6 +80,7 @@ export default {
   },
   data() {
     return {
+      isOpen: false,
       navigationItems: [
         {
           name: 'Home',
@@ -84,7 +106,24 @@ export default {
     },
     userEmail() {
       return this.$store.getters.getUser?.email || 'user@email.com'
+    },
+    isMobile() {
+      return window.innerWidth < 1024
+    },
+    sidebarClasses() {
+      const baseClasses = 'h-screen bg-white dark:bg-gray-800 shadow-lg flex flex-col transition-transform duration-300 ease-in-out z-50'
+      const widthClasses = this.isMobile ? 'fixed top-0 left-0 w-64' : 'w-64'
+      const transformClasses = this.isMobile && !this.isOpen ? '-translate-x-full' : 'translate-x-0'
+      
+      return `${baseClasses} ${widthClasses} ${transformClasses}`
     }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     isActiveRoute(item) {
@@ -95,6 +134,18 @@ export default {
       }
       
       return currentPath.startsWith(item.to);
+    },
+    handleResize() {
+      this.$forceUpdate()
+    },
+    closeSidebar() {
+      this.isOpen = false
+    },
+    openSidebar() {
+      this.isOpen = true
+    },
+    toggleSidebar() {
+      this.isOpen = !this.isOpen
     },
     async logout() {
       await logout();

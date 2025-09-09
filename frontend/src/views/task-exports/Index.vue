@@ -9,8 +9,7 @@
 
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      <span class="ml-3 text-gray-600 dark:text-gray-400">Carregando...</span>
+      <div class="text-gray-500 dark:text-gray-400">Carregando...</div>
     </div>
 
     <!-- Empty State -->
@@ -24,85 +23,38 @@
       </div>
     </div>
 
-    <!-- Exports Table -->
-    <div v-else class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Status
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Criado em
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Arquivo
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Erro
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr 
-              v-for="exportItem in exports" 
-              :key="exportItem.id"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              
-              <!-- Status -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <UiBadge 
-                  :text="exportItem.status" 
-                  type="status" 
-                  :value="exportItem.status"
-                />
-              </td>
-              
-              <!-- Data de Criação -->
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                {{ formatDate(exportItem.created_at) }}
-              </td>
-              
-              <!-- Arquivo -->
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                <span v-if="exportItem.filename" class="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                  {{ exportItem.filename }}
-                </span>
-                <span v-else class="text-gray-400 dark:text-gray-500">-</span>
-              </td>
-              
-              <!-- Erro -->
-              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                <div v-if="exportItem.error_message" class="max-w-xs">
-                  <p class="text-red-600 dark:text-red-400 text-xs bg-red-50 dark:bg-red-900/20 p-2 rounded truncate" :title="exportItem.error_message">
-                    {{ exportItem.error_message }}
-                  </p>
-                </div>
-                <span v-else class="text-gray-400 dark:text-gray-500">-</span>
-              </td>
-              
-              <!-- Ações -->
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <UiButton 
-                  v-if="exportItem.status === 'concluído' && exportItem.file_path"
-                  variant="primary"
-                  size="sm"
-                  @click="downloadExport(exportItem.id)"
-                >
-                  Download
-                </UiButton>
-                <span v-else class="text-gray-400 dark:text-gray-500">-</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <GenericTable :columns="columns" :items="exports">
+      <template #status="{ item }">
+        <UiBadge :text="item.status" type="status" :value="item.status" />
+      </template>
+
+      <template #created_at="{ item }">
+        {{ formatDate(item.created_at) }}
+      </template>
+
+      <template #filename="{ item }">
+        <span v-if="item.filename" class="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+          {{ item.filename }}
+        </span>
+        <span v-else class="text-gray-400 dark:text-gray-500">-</span>
+      </template>
+
+      <template #error_message="{ item }">
+        <div v-if="item.error_message" class="max-w-xs">
+          <p class="text-red-600 dark:text-red-400 text-xs bg-red-50 dark:bg-red-900/20 p-2 rounded truncate" :title="item.error_message">
+            {{ item.error_message }}
+          </p>
+        </div>
+        <span v-else class="text-gray-400 dark:text-gray-500">-</span>
+      </template>
+
+      <template #actions="{ item }">
+        <UiButton v-if="item.status === 'concluído' && item.file_path" variant="primary" size="sm" @click="downloadExport(item.id)">
+          Download
+        </UiButton>
+        <span v-else class="text-gray-400 dark:text-gray-500">-</span>
+      </template>
+    </GenericTable>
   </div>
 </template>
 
@@ -110,17 +62,26 @@
 import { getTaskExports, downloadTaskExport } from '@/api/task-export'
 import UiButton from '@/components/ui/Button.vue'
 import UiBadge from '@/components/ui/Badge.vue'
+import GenericTable from '@/components/GenericTable.vue'
 
 export default {
   name: 'TaskExportsIndex',
   components: {
     UiButton,
-    UiBadge
+    UiBadge,
+    GenericTable
   },
   data() {
     return {
       exports: [],
-      loading: true
+      loading: true,
+      columns: [
+        { key: 'status', label: 'Status' },
+        { key: 'created_at', label: 'Criado em' },
+        { key: 'filename', label: 'Arquivo' },
+        { key: 'error_message', label: 'Erro' },
+        { key: 'actions', label: 'Ações', class: 'text-right' }
+      ]
     }
   },
   async mounted() {

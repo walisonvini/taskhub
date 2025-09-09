@@ -20,12 +20,13 @@
           </Button>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3 min-w-0">
 
           <Select
             id="status"
             v-model="filters.status"
             label="Status"
+            class="min-w-[140px]"
           >
             <option value="">Todos os status</option>
             <option value="pendente">Pendente</option>
@@ -37,6 +38,7 @@
             id="priority"
             v-model="filters.priority"
             label="Prioridade"
+            class="min-w-[180px]"
           >
             <option value="">Todas as prioridades</option>
             <option value="baixa">Baixa</option>
