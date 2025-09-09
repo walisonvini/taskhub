@@ -85,3 +85,9 @@ docker exec -it taskhub_php php artisan queue:work
 # Abra seu navegador e navegue para:
 http://localhost:8080
 ```
+
+12. Para testar os emails, usei o Mailpit (intercepta emails em desenvolvimento)
+```bash
+# Acesse a interface web do Mailpit para ver os emails sendo enviados
+http://localhost:8025
+```
