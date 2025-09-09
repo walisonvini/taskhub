@@ -148,14 +148,13 @@ export default {
   },
   methods: {
     async create() {
-      // Limpar erros anteriores
       this.clearErrors();
       
       try {
         this.isSubmitting = true;
         
-        await createTask(this.form);
-        this.$toast.success('Tarefa criada com sucesso!');
+        const { data } = await createTask(this.form);
+        this.$toast.success(data.message);
         this.$router.push({ name: 'tasks.index' });
       } catch (error) {
         this.handleValidationError(error, 'Erro ao criar tarefa. Tente novamente.');

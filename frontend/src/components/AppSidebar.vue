@@ -69,6 +69,11 @@ export default {
           name: 'Tarefas',
           to: '/dashboard/tasks',
           icon: 'mdi:clipboard-list'
+        },
+        {
+          name: 'Exportações',
+          to: '/dashboard/task-exports',
+          icon: 'mdi:file-export'
         }
       ]
     }

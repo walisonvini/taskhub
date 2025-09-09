@@ -154,7 +154,6 @@ export default {
         const response = await getTask(taskId);
         this.task = response.data.data.task;
       } catch (error) {
-        console.error('Erro ao carregar tarefa:', error);
         this.$toast.error('Erro ao carregar tarefa');
       } finally {
         this.loading = false;
@@ -188,10 +187,9 @@ export default {
         await completeTask(taskId);
         this.$toast.success('Tarefa entregue com sucesso!');
         this.closeDeliverModal();
-        // Recarregar os dados da tarefa
+        
         this.loadTask();
       } catch (error) {
-        console.error('Erro ao entregar tarefa:', error);
         this.$toast.error('Erro ao entregar tarefa. Tente novamente.');
       }
     }

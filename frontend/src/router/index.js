@@ -9,6 +9,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import Login from '@/views/auth/Login.vue';
 import Home from '@/views/Home.vue';
 import Tasks from '@/views/tasks';
+import TaskExports from '@/views/task-exports';
 
 Vue.use(VueRouter)
 
@@ -28,10 +29,13 @@ const routes = [
     children: [
       { path: 'home', name: 'home', component: Home },
       { path: '', redirect: 'home' },
+      
       { path: 'tasks', name: 'tasks.index', component: Tasks.index },
       { path: 'tasks/create', name: 'tasks.create', component: Tasks.create },
       { path: 'tasks/:id', name: 'tasks.show', component: Tasks.show },
       { path: 'tasks/:id/edit', name: 'tasks.edit', component: Tasks.edit },
+
+      { path: 'task-exports', name: 'task-exports.index', component: TaskExports.index },
     ]
   },
 ];

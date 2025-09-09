@@ -32,7 +32,7 @@ class TaskController extends Controller
 
             return $this->successResponse(
                 new TaskPaginatedResource($tasks), 
-                'Tasks retrieved successfully'
+                'Tarefas recuperadas com sucesso'
             );
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
@@ -44,7 +44,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->create($request->validated());
 
-            return $this->successResponse([ 'task' => new TaskResource($task)], 'Task created successfully');
+            return $this->successResponse([ 'task' => new TaskResource($task)], 'Tarefa criada com sucesso');
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }
@@ -55,7 +55,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->find($id);
 
-            return $this->successResponse([ 'task' => new TaskResource($task)], 'Task retrieved successfully');
+            return $this->successResponse([ 'task' => new TaskResource($task)], 'Tarefa recuperada com sucesso');
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }
@@ -66,7 +66,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->update($this->taskService->find($id), $request->validated());
 
-            return $this->successResponse([ 'task' => new TaskResource($task)], 'Task updated successfully');
+            return $this->successResponse([ 'task' => new TaskResource($task)], 'Tarefa atualizada com sucesso');
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }
@@ -77,7 +77,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->complete($this->taskService->find($id));
 
-            return $this->successResponse([ 'task' => new TaskResource($task)], 'Task completed successfully');
+            return $this->successResponse([ 'task' => new TaskResource($task)], 'Tarefa concluída com sucesso');
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }
@@ -88,7 +88,7 @@ class TaskController extends Controller
         try {
             $this->taskService->delete($this->taskService->find($id));
 
-            return $this->successResponse(null, 'Task deleted successfully');
+            return $this->successResponse(null, 'Tarefa deletada com sucesso');
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 404);
         }

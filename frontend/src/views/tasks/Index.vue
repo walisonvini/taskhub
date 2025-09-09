@@ -2,13 +2,23 @@
   <div class="max-w-4xl mx-auto p-4 sm:p-6">
     <div class="mb-6">
       <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <Button 
-          @click="createTask"
-          variant="primary"
-          size="md"
-        >
-          Criar Tarefa
-        </Button>
+        <div class="flex gap-3">
+          <Button 
+            @click="createTask"
+            variant="primary"
+            size="md"
+          >
+            Criar Tarefa
+          </Button>
+          
+          <Button 
+            @click="exportTasks"
+            variant="outline"
+            size="md"
+          >
+            Exportar Tarefas
+          </Button>
+        </div>
 
         <div class="flex flex-col sm:flex-row gap-3">
 
@@ -83,6 +93,7 @@
   
 <script>
 import { getTasks, updateTask, deleteTask, completeTask } from '@/api/task';
+import { createTaskExport } from '@/api/task-export';
 import TaskCard from '@/components/TaskCard.vue';
 import Button from '@/components/ui/Button.vue';
 import Select from '@/components/ui/Select.vue';
@@ -136,6 +147,24 @@ export default {
     createTask() {
       this.$router.push({ name: 'tasks.create' });
     },
+    async exportTasks() {
+      try {
+        // Usar os filtros atuais para a exportação
+        const filters = { ...this.filters };
+        
+        // Remove valores vazios
+        Object.keys(filters).forEach(key => {
+          if (filters[key] === '' || filters[key] === null || filters[key] === undefined) {
+            delete filters[key];
+          }
+        });
+        
+        await createTaskExport(filters);
+        this.$toast.success('Exportação criada com sucesso! Você pode acompanhar o progresso na página de exportações.');
+      } catch (error) {
+        this.$toast.error('Erro ao criar exportação. Tente novamente.');
+      }
+    },
     handleViewTask(task) {
       if (task && task.id) {
         this.$router.push({ name: 'tasks.show', params: { id: task.id } });
@@ -162,16 +191,13 @@ export default {
       if (!this.taskToDelete) return;
       
       try {
-        // Excluir tarefa via API
-        await deleteTask(this.taskToDelete.id);
+        const { data } = await deleteTask(this.taskToDelete.id);
         
-        this.$toast.success(`Tarefa "${this.taskToDelete.title}" excluída com sucesso!`);
+        this.$toast.success(data.message);
         this.closeDeleteModal();
         
-        // Recarregar as tarefas para manter paginação consistente
         await this.loadTasks();
       } catch (error) {
-        console.error('Erro ao excluir tarefa:', error);
         this.$toast.error('Erro ao excluir tarefa. Tente novamente.');
       }
     },
@@ -195,7 +221,6 @@ export default {
           this.$toast.success(`Tarefa "${task.title}" marcada como concluída!`);
         }
       } catch (error) {
-        console.error('Erro ao atualizar status da tarefa:', error);
         this.$toast.error('Erro ao atualizar tarefa. Tente novamente.');
       }
     },
@@ -232,7 +257,7 @@ export default {
           itemsPerPage: parseInt(data.pagination.per_page)
         };
       } catch (error) {
-        console.error('Erro ao carregar tasks:', error);
+        this.$toast.error('Erro ao carregar tarefas. Tente novamente.');
       } finally {
         this.loading = false;
       }

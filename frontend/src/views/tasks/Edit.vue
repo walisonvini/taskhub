@@ -176,7 +176,6 @@ export default {
           due_date: this.task.due_date ? this.task.due_date.split('T')[0] : ''
         };
       } catch (error) {
-        console.error('Erro ao carregar tarefa:', error);
         this.$toast.error('Erro ao carregar tarefa');
       } finally {
         this.loading = false;
@@ -190,8 +189,8 @@ export default {
         this.isSubmitting = true;
         
         const taskId = this.$route.params.id;
-        await updateTask(taskId, this.form);
-        this.$toast.success('Tarefa atualizada com sucesso!');
+        const { data } = await updateTask(taskId, this.form);
+        this.$toast.success(data.message);
         this.$router.push({ name: 'tasks.index' });
       } catch (error) {
         this.handleValidationError(error, 'Erro ao atualizar tarefa. Tente novamente.');
