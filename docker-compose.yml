@@ -6,7 +6,6 @@ services:
     container_name: taskhub_php
     volumes:
       - ./backend:/var/www/html
-      - vendor_data:/var/www/html/vendor
     ports:
       - "8000:8000"
     depends_on:
@@ -14,7 +13,7 @@ services:
       - redis
     networks:
       - taskhub
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    command: sh -c "composer install && php artisan serve --host=0.0.0.0 --port=8000"
 
   node:
     build:
@@ -23,6 +22,7 @@ services:
     container_name: taskhub_node
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
       - VUE_APP_API_URL=http://localhost:8000

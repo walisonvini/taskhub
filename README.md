@@ -30,8 +30,9 @@ TaskHub é uma aplicação para gerenciar tarefas de forma organizada, com contr
 
 ## 🐋 Instalação
 
-1. Copie o arquivo .env
+1. Copie o arquivo .env (dentro da pasta backend)
 ```bash
+cd backend
 cp .env.example .env
 ```
 
